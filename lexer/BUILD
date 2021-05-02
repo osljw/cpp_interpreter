@@ -8,6 +8,9 @@ cc_library(
     name = "lexer",
     srcs = ["lexer.cpp"],
     hdrs = ["lexer.h"],
+    visibility = [
+        "//visibility:public",
+    ],
     deps = [
         "//token:token",
     ],

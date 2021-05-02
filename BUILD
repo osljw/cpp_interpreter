@@ -7,6 +7,7 @@ cc_binary(
         "-std=c++2a",
     ],
     deps = [
+        "//repl:repl"
     ],
 )
 
