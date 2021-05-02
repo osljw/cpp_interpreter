@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 class Token {
  public:
@@ -41,3 +42,5 @@ const std::string RBRACE = "}";
 // Keywords
 const std::string FUNCTION = "FUNCTION";
 const std::string LET = "LET";
+
+std::string LookupIdent(const std::string& ident);

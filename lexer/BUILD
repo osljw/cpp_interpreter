@@ -17,7 +17,9 @@ cc_test(
   name = "lexer_test",
   size = "small",
   srcs = ["lexer_test.cpp"],
-
+  copts = [
+      "-std=c++2a",
+  ],
   deps = [
     ":lexer",
     "@com_google_googletest//:gtest_main",
