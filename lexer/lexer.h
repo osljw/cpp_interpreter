@@ -10,6 +10,8 @@ class Lexer {
 
   void skipWhitespace();
   void readChar();
+  char peekChar();
+
   bool isLetter();
   std::string readIdentifier();
 

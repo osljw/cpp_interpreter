@@ -23,16 +23,28 @@ void Lexer::readChar() {
   readPosition += 1;
 }
 
+char Lexer::peekChar() {
+  if (readPosition >= input.size()) {
+    return 0;
+  }
+
+  return input[readPosition];
+}
+
 Token Lexer::NextToken() {
   Token tok;
 
   skipWhitespace();
-  //std::cout << "ch=" << int(ch) << std::endl;
-  
+
   std::string literal = std::string(1, ch);
   switch (ch) {
     case '=':
-      tok = Token(ASSIGN, literal);
+      if (peekChar() == '=') {
+        readChar();
+        tok = Token(EQ, literal + "=");
+      } else {
+        tok = Token(ASSIGN, literal);
+      }
       break;
     case ';':
       tok = Token(SEMICOLON, literal);
@@ -54,6 +66,29 @@ Token Lexer::NextToken() {
       break;
     case '+':
       tok = Token(PLUS, literal);
+      break;
+    case '-':
+      tok = Token(MINUS, literal);
+      break;
+    case '*':
+      tok = Token(ASTERISK, literal);
+      break;
+    case '/':
+      tok = Token(SLASH, literal);
+      break;
+    case '<':
+      tok = Token(LT, literal);
+      break;
+    case '>':
+      tok = Token(GT, literal);
+      break;
+    case '!':
+      if (peekChar() == '=') {
+        readChar();
+        tok = Token(NOT_EQ, literal + "=");
+      } else {
+        tok = Token(BANG, literal);
+      }
       break;
     case 0:
       tok = Token(EOFEND, literal);

@@ -30,6 +30,15 @@ const std::string INT = "INT";      // 1343456
 // Operators
 const std::string ASSIGN = "=";
 const std::string PLUS = "+";
+const std::string MINUS = "-";
+const std::string BANG = "!";
+const std::string ASTERISK = "*";
+const std::string SLASH = "/";
+
+const std::string LT = "<";
+const std::string GT = ">";
+const std::string EQ = "==";
+const std::string NOT_EQ = "!=";
 
 // Delimiters
 const std::string COMMA = ",";
@@ -42,5 +51,10 @@ const std::string RBRACE = "}";
 // Keywords
 const std::string FUNCTION = "FUNCTION";
 const std::string LET = "LET";
+const std::string IF = "IF";
+const std::string ELSE = "ELSE";
+const std::string TRUE = "TRUE";
+const std::string FALSE = "FALSE";
+const std::string RETURN = "RETURN";
 
 std::string LookupIdent(const std::string& ident);

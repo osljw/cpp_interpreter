@@ -41,6 +41,9 @@ TEST(NextTokenTest2, NextTokenT2) {
     };
 
     let result = add(five, ten);
+
+    !-/*5
+    <>return,true
   )code";
 
   std::cout << "input:" << input << std::endl;
@@ -86,6 +89,17 @@ TEST(NextTokenTest2, NextTokenT2) {
       {IDENT,"ten"},
       {RPAREN,")"},
       {SEMICOLON,";"},
+
+      {BANG, "!"},
+      {MINUS, "-"},
+      {SLASH, "/"},
+      {ASTERISK, "*"},
+      {INT, "5"},
+      {LT, "<"},
+      {GT, ">"},
+      {RETURN, "return"},
+      {COMMA, ","},
+      {TRUE, "true"},
 
       {EOFEND, ""},
       // clang-format on

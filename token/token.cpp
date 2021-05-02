@@ -1,8 +1,15 @@
 #include "token/token.h"
 
 std::unordered_map<std::string, std::string> keywords = {
+    // clang-format off
     {"fn", FUNCTION},
     {"let", LET},
+    {"if", IF},
+    {"else", ELSE},
+    {"true", TRUE},
+    {"false", FALSE},
+    {"return", RETURN},
+    // clang-format on
 };
 
 std::ostream& operator << (std::ostream &os, const Token& tok) { 
