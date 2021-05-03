@@ -1,16 +1,28 @@
 #pragma once
 
+#include <functional>
 #include <memory>
+#include <unordered_map>
 
 #include "ast/ast.h"
 #include "lexer/lexer.h"
 
+typedef std::shared_ptr<Expression>(prefixParseFn)();
+typedef std::shared_ptr<Expression>(infixParseFn)(std::shared_ptr<Expression>);
+
+enum class Precedence {
+  LOWEST,
+  EQUALS,
+  LESSGREATER,
+  SUM,
+  PRODUCT,
+  PREFIX,
+  CALL,
+};
+
 class Parser {
  public:
-  Parser(Lexer* l) : l(l) {
-    nextToken();
-    nextToken();
-  }
+  Parser(Lexer* l);
 
   void nextToken();
   bool expectPeek(TokenType t);
@@ -20,6 +32,12 @@ class Parser {
 
   std::shared_ptr<Statement> parseLetStatement();
   std::shared_ptr<Statement> parseReturnStatement();
+  std::shared_ptr<Statement> parseExpressionStatement();
+
+  std::shared_ptr<Expression> parseExpression(Precedence precedence);
+  std::shared_ptr<Expression> parseIdentifier();
+  std::shared_ptr<Expression> parseIntegerLiteral();
+  std::shared_ptr<Expression> parsePrefixExpression();
 
   void peekError(TokenType t);
   void checkErrors();
@@ -28,6 +46,9 @@ class Parser {
 
   Token curToken;
   Token peekToken;
+
+  std::unordered_map<TokenType, std::function<prefixParseFn>> prefixParseFns;
+  std::unordered_map<TokenType, std::function<infixParseFn>> infixParseFns;
 
   std::vector<std::string> errors;
 };
