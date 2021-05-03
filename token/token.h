@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+typedef std::string TokenType;
+
 class Token {
  public:
   Token() {}
@@ -14,7 +16,7 @@ class Token {
     return *this;
   };
 
-  std::string type;
+  TokenType type;
   std::string literal;
 };
 
