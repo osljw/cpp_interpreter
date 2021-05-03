@@ -22,6 +22,8 @@ std::shared_ptr<Program> Parser::parseProgram() {
 std::shared_ptr<Statement> Parser::parseStatement() {
   if (curToken.type == LET) {
     return parseLetStatement();
+  } else if (curToken.type == RETURN) {
+    return parseReturnStatement();
   }
 
   return nullptr;
@@ -35,6 +37,19 @@ std::shared_ptr<Statement> Parser::parseLetStatement() {
   stmt->name = Identifier(curToken, curToken.literal);
 
   if (!expectPeek(ASSIGN)) return nullptr;
+
+  while (curToken.type != SEMICOLON) {
+    nextToken();
+  }
+
+  return stmt;
+}
+
+std::shared_ptr<Statement> Parser::parseReturnStatement() {
+  std::shared_ptr<ReturnStatement> stmt = std::make_shared<ReturnStatement>();
+  stmt->token = curToken;
+
+  if (!expectPeek(INT)) return nullptr;
 
   while (curToken.type != SEMICOLON) {
     nextToken();

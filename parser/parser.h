@@ -17,7 +17,9 @@ class Parser {
 
   std::shared_ptr<Program> parseProgram();
   std::shared_ptr<Statement> parseStatement();
+
   std::shared_ptr<Statement> parseLetStatement();
+  std::shared_ptr<Statement> parseReturnStatement();
 
   void peekError(TokenType t);
   void checkErrors();

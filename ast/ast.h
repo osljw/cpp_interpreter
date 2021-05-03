@@ -35,3 +35,9 @@ class LetStatement : public Statement {
   Identifier name;
   Expression value;
 };
+
+class ReturnStatement : public Statement {
+ public:
+  Token token;
+  Expression value;
+};
