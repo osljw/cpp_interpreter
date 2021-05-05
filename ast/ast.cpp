@@ -29,7 +29,7 @@ std::string ExpressionStatement::String() { return expression->String(); }
 
 std::string PrefixExpression::String() {
   std::stringstream ss;
-  ss << "(" << op << token.literal << right->String() << ")";
+  ss << "(" << op << right->String() << ")";
   return ss.str();
 }
 

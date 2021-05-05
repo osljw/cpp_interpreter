@@ -220,3 +220,26 @@ TEST(ParserTest, TestInfixExpression) {
     EXPECT_TRUE(testIntegerLiteral(infix_exp->right, tt.right_value));
   }
 }
+
+class PrecedenceCase {
+ public:
+  std::string input;
+  std::string expected;
+};
+
+TEST(ParserTest, TestPrecedenceParseing) {
+  std::vector<PrecedenceCase> tests = {
+      {"-a * b", "((-a) * b)"},
+      {"!-a", "(!(-a))"},
+      {"a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"},
+      {"3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"}};
+
+  for (auto& tt : tests) {
+    Lexer l(tt.input);
+    Parser p(&l);
+
+    std::shared_ptr<Program> program = p.parseProgram();
+    p.checkErrors();
+    EXPECT_STREQ(program->String().c_str(), tt.expected.c_str());
+  }
+}
