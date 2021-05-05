@@ -32,3 +32,9 @@ std::string PrefixExpression::String() {
   ss << "(" << op << token.literal << right->String() << ")";
   return ss.str();
 }
+
+std::string InfixExpression::String() {
+  std::stringstream ss;
+  ss << "(" << left->String() << " " << op << " " << right->String() << ")";
+  return ss.str();
+}

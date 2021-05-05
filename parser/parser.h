@@ -27,6 +27,9 @@ class Parser {
   void nextToken();
   bool expectPeek(TokenType t);
 
+  Precedence curPrecedence();
+  Precedence peekPrecedence();
+
   std::shared_ptr<Program> parseProgram();
   std::shared_ptr<Statement> parseStatement();
 
@@ -38,6 +41,8 @@ class Parser {
   std::shared_ptr<Expression> parseIdentifier();
   std::shared_ptr<Expression> parseIntegerLiteral();
   std::shared_ptr<Expression> parsePrefixExpression();
+  std::shared_ptr<Expression> parseInfixExpression(
+      std::shared_ptr<Expression> left);
 
   void peekError(TokenType t);
   void checkErrors();

@@ -57,6 +57,16 @@ class PrefixExpression : public Expression {
   std::shared_ptr<Expression> right;
 };
 
+class InfixExpression : public Expression {
+ public:
+  std::string String();
+
+  Token token;
+  std::shared_ptr<Expression> left;
+  std::string op;
+  std::shared_ptr<Expression> right;
+};
+
 class LetStatement : public Statement {
  public:
   std::string String() override;

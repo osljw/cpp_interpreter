@@ -168,6 +168,55 @@ TEST(ParserTest, TestPrefixExpression) {
     EXPECT_TRUE(prefix_exp->op == tt.op);
 
     EXPECT_NE(prefix_exp->right, nullptr);
-    std::cout << "prefix right: " << prefix_exp->right->String() << std::endl;
+  }
+}
+
+class InfixCase {
+ public:
+  std::string input;
+  int64_t left_value;
+  std::string op;
+  int64_t right_value;
+};
+
+bool testIntegerLiteral(std::shared_ptr<Expression> exp, int64_t value) {
+  EXPECT_NE(exp, nullptr);
+  std::shared_ptr<IntegerLiteral> integer_exp =
+      std::dynamic_pointer_cast<IntegerLiteral>(exp);
+
+  if (integer_exp == nullptr) {
+    std::cerr << "testIntegerLiteral input exp is not IntegerLiteral"
+              << std::endl;
+    return false;
+  }
+
+  return integer_exp->value == value;
+}
+
+TEST(ParserTest, TestInfixExpression) {
+  std::vector<InfixCase> tests = {
+      {"5 + 5", 5, "+", 5},
+      {"5 - 5", 5, "-", 5},
+  };
+
+  for (auto& tt : tests) {
+    Lexer l(tt.input);
+    Parser p(&l);
+
+    std::shared_ptr<Program> program = p.parseProgram();
+    p.checkErrors();
+    EXPECT_EQ(program->statements.size(), 1);
+
+    std::shared_ptr<ExpressionStatement> expression_stmt =
+        std::dynamic_pointer_cast<ExpressionStatement>(program->statements[0]);
+    EXPECT_NE(expression_stmt, nullptr);
+
+    std::shared_ptr<InfixExpression> infix_exp =
+        std::dynamic_pointer_cast<InfixExpression>(expression_stmt->expression);
+    EXPECT_NE(infix_exp, nullptr);
+    EXPECT_TRUE(infix_exp->op == tt.op);
+
+    EXPECT_TRUE(testIntegerLiteral(infix_exp->left, tt.left_value));
+    EXPECT_TRUE(testIntegerLiteral(infix_exp->right, tt.right_value));
   }
 }

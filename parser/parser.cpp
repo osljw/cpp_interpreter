@@ -1,6 +1,17 @@
 #include "parser/parser.h"
 
-using namespace std::placeholders;
+std::unordered_map<TokenType, Precedence> precedences = {
+    // clang-format off
+    {EQ, Precedence::EQUALS},
+    {NOT_EQ, Precedence::EQUALS},
+    {LT, Precedence::LESSGREATER},
+    {GT, Precedence::LESSGREATER},
+    {PLUS, Precedence::SUM},
+    {MINUS, Precedence::SUM},
+    {SLASH, Precedence::PRODUCT},
+    {ASTERISK, Precedence::PRODUCT},
+    // clang-format on
+};
 
 Parser::Parser(Lexer* l) : l(l) {
   nextToken();
@@ -8,8 +19,21 @@ Parser::Parser(Lexer* l) : l(l) {
 
   prefixParseFns[IDENT] = [this]() { return this->parseIdentifier(); };
   prefixParseFns[INT] = [this]() { return this->parseIntegerLiteral(); };
+
   prefixParseFns[BANG] = [this]() { return this->parsePrefixExpression(); };
   prefixParseFns[MINUS] = [this]() { return this->parsePrefixExpression(); };
+
+  auto infix_fn = [this](std::shared_ptr<Expression> left) {
+    return this->parseInfixExpression(left);
+  };
+  infixParseFns[PLUS] = infix_fn;
+  infixParseFns[MINUS] = infix_fn;
+  infixParseFns[SLASH] = infix_fn;
+  infixParseFns[ASTERISK] = infix_fn;
+  infixParseFns[EQ] = infix_fn;
+  infixParseFns[NOT_EQ] = infix_fn;
+  infixParseFns[LT] = infix_fn;
+  infixParseFns[GT] = infix_fn;
 }
 
 void Parser::nextToken() {
@@ -100,6 +124,23 @@ std::shared_ptr<Statement> Parser::parseExpressionStatement() {
   return stmt;
 }
 
+Precedence Parser::curPrecedence() {
+  auto it = precedences.find(curToken.type);
+  if (it != precedences.end()) {
+    return it->second;
+  }
+
+  return Precedence::LOWEST;
+}
+
+Precedence Parser::peekPrecedence() {
+  auto it = precedences.find(peekToken.type);
+  if (it != precedences.end()) {
+    return it->second;
+  }
+
+  return Precedence::LOWEST;
+}
 
 std::shared_ptr<Expression> Parser::parseExpression(Precedence precedence) {
   auto it = prefixParseFns.find(curToken.type);
@@ -108,7 +149,17 @@ std::shared_ptr<Expression> Parser::parseExpression(Precedence precedence) {
     return nullptr;
   }
   auto prefix = it->second;
-  auto left_exp = prefix();
+  std::shared_ptr<Expression> left_exp = prefix();
+
+  while (peekToken.type != SEMICOLON && precedence < peekPrecedence()) {
+    auto it = infixParseFns.find(peekToken.type);
+    if (it == infixParseFns.end()) return left_exp;
+
+    nextToken();
+
+    auto infix = it->second;
+    left_exp = infix(left_exp);
+  }
 
   return left_exp;
 }
@@ -142,6 +193,21 @@ std::shared_ptr<Expression> Parser::parsePrefixExpression() {
   prefix_exp->right = parseExpression(Precedence::PREFIX);
 
   return prefix_exp;
+}
+
+std::shared_ptr<Expression> Parser::parseInfixExpression(
+    std::shared_ptr<Expression> left) {
+  std::shared_ptr<InfixExpression> infix_exp =
+      std::make_shared<InfixExpression>();
+  infix_exp->token = curToken;
+  infix_exp->op = curToken.literal;
+  infix_exp->left = left;
+
+  Precedence precedence = curPrecedence();
+  nextToken();
+  infix_exp->right = parseExpression(precedence);
+
+  return infix_exp;
 }
 
 void Parser::peekError(TokenType t) {
